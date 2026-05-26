@@ -1,35 +1,40 @@
 package it.unicam.cs.mpgc.rpg125673;
 
-import it.unicam.cs.mpgc.rpg125673.model.entity.Giocatore;
-import it.unicam.cs.mpgc.rpg125673.model.entity.Mostro;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-public class App {
-    public static void main(String args[]) {
-        // 1. Creiamo le nostre entità
-        Giocatore eroe = new Giocatore("Artù");
-        Mostro goblin = new Mostro("Goblin Cattivo", 30, 5, 50);
+import java.net.URL;
 
-        System.out.println("Inizia la battaglia tra " + eroe.getNome() + " e " + goblin.getNome() + "!\n");
+// Estendendo Application, diciamo a Java che questa è un'app JavaFX
+public class App extends Application {
 
-        // 2. L'eroe attacca il goblin
-        System.out.println(eroe.getNome() + " attacca infliggendo " + eroe.getAttacco() + " danni!");
-        goblin.subisciDanno(eroe.getAttacco());
-        System.out.println("Salute del Goblin: " + goblin.getPuntiVita() + "/" + goblin.getPuntiVitaMassimi() + "\n");
-
-        // 3. Il goblin contrattacca
-        System.out.println(goblin.getNome() + " contrattacca infliggendo " + goblin.getAttacco() + " danni!");
-        eroe.subisciDanno(goblin.getAttacco());
-        System.out.println("Salute di " + eroe.getNome() + ": " + eroe.getPuntiVita() + "/" + eroe.getPuntiVitaMassimi() + "\n");
-
-        // 4. L'eroe dà il colpo di grazia
-        System.out.println(eroe.getNome() + " sferra un altro attacco!");
-        goblin.subisciDanno(eroe.getAttacco());
-
-        if (!goblin.isVivo()) {
-            System.out.println("Il " + goblin.getNome() + " è stato sconfitto!");
-            eroe.aggiungiEsperienza(goblin.getRicompensaEsperienza());
-            System.out.println(eroe.getNome() + " ha guadagnato " + goblin.getRicompensaEsperienza() + " XP. (XP Totali: " + eroe.getEsperienza() + ")");
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        // 1. Diciamo a Java dove trovare il file grafico (nella cartella resources)
+        URL fxmlLocation = getClass().getResource("/fxml/main.fxml");
+        if (fxmlLocation == null) {
+            throw new IllegalStateException("Impossibile trovare il file main.fxml. Controlla la cartella resources!");
         }
+
+        // 2. Carichiamo il file FXML
+        FXMLLoader loader = new FXMLLoader(fxmlLocation);
+        Parent root = loader.load();
+
+        // 3. Creiamo la scena (la finestra) grande 600x400 pixel
+        Scene scene = new Scene(root, 600, 400);
+
+        // 4. Impostiamo il titolo e mostriamo la finestra
+        primaryStage.setTitle("Dungeon Arena RPG");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        // Questo comando fa partire il motore grafico di JavaFX
+        launch(args);
     }
 }
 
