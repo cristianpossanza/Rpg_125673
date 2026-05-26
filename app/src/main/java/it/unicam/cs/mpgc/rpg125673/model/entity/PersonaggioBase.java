@@ -68,5 +68,15 @@ public abstract class PersonaggioBase implements Personaggio {
         }
     }
 
+    @Override
+    public void cura(int punti) {
+        if (punti > 0) {
+            this.puntiVita += punti;
+            if (this.puntiVita > this.puntiVitaMassimi) {
+                this.puntiVita = this.puntiVitaMassimi; // Non supera mai il massimo
+            }
+        }
+    }
+
     // NOTA: isVivo() è stato rimosso perché ora ci pensa l'interfaccia!
 }

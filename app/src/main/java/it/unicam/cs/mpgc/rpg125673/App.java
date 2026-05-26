@@ -19,21 +19,21 @@ public class App extends Application {
             throw new IllegalStateException("Impossibile trovare il file main.fxml. Controlla la cartella resources!");
         }
 
-        // 2. Carichiamo il file FXML
+        //Carico il file FXML
         FXMLLoader loader = new FXMLLoader(fxmlLocation);
         Parent root = loader.load();
 
-        // 3. Creiamo la scena (la finestra) grande 600x400 pixel
+        //Creo la scena (la finestra) grande 600x400 pixel
         Scene scene = new Scene(root, 600, 400);
 
-        // 4. Impostiamo il titolo e mostriamo la finestra
+        //Imposto il titolo e mostriamo la finestra
         primaryStage.setTitle("Dungeon Arena RPG");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
     public static void main(String[] args) {
-        // Questo comando fa partire il motore grafico di JavaFX
+        //fa partire il motore grafico di JavaFX
         launch(args);
     }
 }
