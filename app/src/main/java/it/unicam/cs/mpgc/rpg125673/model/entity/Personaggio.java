@@ -10,6 +10,7 @@ public interface Personaggio {
     int getAttacco();            // Potenza di attacco
 
     void subisciDanno(int danno);
+
     default boolean isVivo(){
         return getPuntiVita() > 0;
     }

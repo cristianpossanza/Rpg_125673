@@ -8,17 +8,44 @@ public abstract class PersonaggioBase implements Personaggio {
     private int puntiVitaMassimi;
     private int attacco;
 
-    // 1. ECCO IL COSTRUTTORE VUOTO RICHIESTO DAL TUTOR (Fondamentale per JPA/Hibernate)
+    //ECCO IL COSTRUTTORE VUOTO RICHIESTO DAL TUTOR (Fondamentale per JPA/Hibernate)
     public PersonaggioBase() {
     }
 
-    // 2. Aggiungiamo i metodi Setter per impostare i valori
-    public void setNome(String nome) { this.nome = nome; }
-    public void setPuntiVita(int puntiVita) { this.puntiVita = puntiVita; }
-    public void setPuntiVitaMassimi(int puntiVitaMassimi) { this.puntiVitaMassimi = puntiVitaMassimi; }
-    public void setAttacco(int attacco) { this.attacco = attacco; }
+    //Aggiungiamo i metodi Setter per impostare i valori
+    public void setNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("Il nome del personaggio non può essere nullo o vuoto.");
+        }
+        this.nome = nome;
+    }
 
-    // --- I Getter rimangono uguali ---
+    public void setPuntiVita(int puntiVita) {
+        if (puntiVita < 0) {
+            this.puntiVita = 0;
+        } else if (puntiVita > this.puntiVitaMassimi) {
+            this.puntiVita = this.puntiVitaMassimi;
+        } else {
+            this.puntiVita = puntiVita;
+        }
+        this.puntiVita = puntiVita;
+    }
+
+    public void setPuntiVitaMassimi(int puntiVitaMassimi) {
+        if (puntiVitaMassimi <= 0) {
+            throw new IllegalArgumentException("I punti vita massimi devono essere maggiori di zero.");
+        }
+        this.puntiVitaMassimi = puntiVitaMassimi;
+    }
+
+    public void setAttacco(int attacco) {
+        if (attacco < 0) {
+            throw new IllegalArgumentException("L'attacco non può essere negativo.");
+        }
+        this.attacco = attacco;
+    }
+
+    // I Getter rimangono uguali
     @Override
     public String getNome() { return this.nome; }
 
