@@ -62,7 +62,7 @@ public class GestoreBattaglia {
         }
 
         //il nemico attacca mentre ti curi
-        eseguiTurnoemico(logTurno);
+        eseguiTurnoNemico(logTurno);
 
         return logTurno.toString();
     }
@@ -74,6 +74,7 @@ public class GestoreBattaglia {
     //va bene la gestione di tutti questi turni all'interno di una sola classe, oppure è meglio dividere
     //in piu classi
     private String gestisciVittoria() {
+        return "";
     }
 
     // Getter utili per l'interfaccia grafica
