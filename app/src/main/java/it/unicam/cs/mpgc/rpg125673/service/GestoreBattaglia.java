@@ -66,22 +66,34 @@ public class GestoreBattaglia {
 
         return logTurno.toString();
     }
-
+        //metodi privati perche le logiche dei mostri li fa la macchina
     private void eseguiTurnoNemico(StringBuilder logTurno) {
+        int dannoNemico = nemico.getAttacco();
+        giocatore.subisciDanno(dannoNemico);
+        logTurno.append(nemico.getNome()).append(" contrattacca infliggendo ").append(dannoNemico).append(" danni!\n");
+
+        if (!giocatore.isVivo()) {
+            battagliaTerminata = true;
+            logTurno.append("\nSei stati sconfitto... GAME OVER.");
+        }
     }
 
-    //perche questi 2 metodi li metto privati
-    //va bene la gestione di tutti questi turni all'interno di una sola classe, oppure è meglio dividere
-    //in piu classi
-    private String gestisciVittoria() {
-        return "";
+
+    private String gestisciVittoria(StringBuilder logTurno) {
+        battagliaTerminata = true;
+        logTurno.append("il ").append(nemico.getNome()).append(" è crollato a terra sconfitto!\n");
+
+        int xpGuadagnata = nemico.getRicompensaEsperienza();
+        giocatore.aggiungiEsperienza(xpGuadagnata); //potrebbe scattare il levelup
+        logTurno.append("Hai guadagnato ").append(xpGuadagnata).append(" Punti Esperienza!");
+
+        return logTurno.toString();
     }
 
     // Getter utili per l'interfaccia grafica
     public boolean isBattagliaTerminata() {
         return battagliaTerminata;
     }
-
     public Mostro getNemico() {
         return nemico;
     }
