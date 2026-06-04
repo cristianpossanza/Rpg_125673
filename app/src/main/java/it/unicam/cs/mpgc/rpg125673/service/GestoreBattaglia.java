@@ -4,6 +4,8 @@ import it.unicam.cs.mpgc.rpg125673.model.entity.Giocatore;
 import it.unicam.cs.mpgc.rpg125673.model.entity.Mostro;
 import it.unicam.cs.mpgc.rpg125673.model.item.Pozione;
 
+import java.util.Objects;
+
 /**
  * Questa classe si occupa esclusivamente di gestire le regole
  * e i turni di un combattimento tra un Giocatore e un Mostro.
@@ -14,8 +16,8 @@ public class GestoreBattaglia {
     private boolean battagliaTerminata;
 
     public GestoreBattaglia(Giocatore giocatore, Mostro nemico) {
-        this.giocatore = giocatore;
-        this.nemico = nemico;
+        this.giocatore = Objects.requireNonNull(giocatore, "Il giocatore non può essere null!");
+        this.nemico = Objects.requireNonNull(nemico, "Il nemico non può essere null!");
         this.battagliaTerminata = false;
     }
 

@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Alert;
+
 
 public class MainController {
 //chiedere a se: Il controller non è troppo lungo? non sarebbe meglio creare piu controller?
@@ -71,8 +73,8 @@ public class MainController {
             giocatore.getInventario().equipaggiaArma(spadaDiScorta);
             scriviLog(giocatore.getNome() + " ha equipaggiato " + spadaDiScorta.getNome() + "!");
             aggiornaStatistiche();
-        } catch (IllegalArgumentException e) {
-            scriviLog("Non hai l'arma nello zaino!");
+        } catch (Exception e) {
+            mostraErrore("Azione non valida", e.getMessage());
         }
     }
 
@@ -110,5 +112,13 @@ public class MainController {
             btnEquipaggia.setDisable(true);
             scriviLog("\n--- FINE SCONTRO ---");
         }
+    }
+
+    private void mostraErrore(String titolo, String messaggio){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(titolo);
+        alert.setHeaderText(null);
+        alert.setContentText(messaggio);
+        alert.showAndWait();
     }
 }

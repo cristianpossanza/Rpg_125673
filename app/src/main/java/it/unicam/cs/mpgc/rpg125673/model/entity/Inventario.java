@@ -1,5 +1,6 @@
 package it.unicam.cs.mpgc.rpg125673.model.entity;
 
+import it.unicam.cs.mpgc.rpg125673.exception.OggettoNonPossedutoException;
 import it.unicam.cs.mpgc.rpg125673.model.item.Arma;
 import it.unicam.cs.mpgc.rpg125673.model.item.Oggetto;
 import it.unicam.cs.mpgc.rpg125673.model.item.Pozione;
@@ -32,7 +33,7 @@ public class Inventario {
             rimuoviOggetto(nuovaArma);
             System.out.println("Hai equipaggiato: " + nuovaArma.getNome());
         } else {
-            throw new IllegalArgumentException("Non possiedi quest'arma!");
+            throw new OggettoNonPossedutoException("Non possiedi l'arma: " + nuovaArma.getNome());
         }
     }
         //uso l'interfaccia personaggio base
