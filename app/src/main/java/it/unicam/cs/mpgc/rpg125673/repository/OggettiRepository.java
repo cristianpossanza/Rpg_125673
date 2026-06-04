@@ -27,18 +27,14 @@ public class OggettiRepository {
 
     private void caricaOggettiDaXml() {
         try {
-            //aprima il file XML dalla cartella resources
             InputStream is =
                     Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("oggetti.xml"));
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(is);
 
-            //inizializzo XPath
             XPath xPath = XPathFactory.newInstance().newXPath();
 
-            //estrazione armi
-            //l'esperessione "//armi/arma" dice a xpath di trovare tutti i tag <arma> dentro <armi>
             NodeList armiNodes = (NodeList) xPath.compile("//armi/arma").evaluate(document, XPathConstants.NODESET);
 
             for (int i = 0; i < armiNodes.getLength(); i++) {
@@ -47,12 +43,9 @@ public class OggettiRepository {
                 String desc = elemento.getElementsByTagName("descrizione").item(0).getTextContent();
                 int bonus = Integer.parseInt(elemento.getElementsByTagName("bonusAttacco").item(0).getTextContent());
 
-                // Aggiungiamo l'arma all'HashSet
                 catalogoOggetti.add(new Arma(nome, desc, bonus));
             }
 
-            // --- ESTRAZIONE POZIONI ---
-            // Stessa cosa, ma cerchiamo "//pozioni/pozione"
             NodeList pozioniNodes = (NodeList) xPath.compile("//pozioni/pozione").evaluate(document, XPathConstants.NODESET);
 
             for (int i = 0; i < pozioniNodes.getLength(); i++) {
@@ -61,7 +54,6 @@ public class OggettiRepository {
                 String desc = elemento.getElementsByTagName("descrizione").item(0).getTextContent();
                 int cura = Integer.parseInt(elemento.getElementsByTagName("puntiCura").item(0).getTextContent());
 
-                // Aggiungiamo la pozione all'HashSet
                 catalogoOggetti.add(new Pozione(nome, desc, cura));
             }
 

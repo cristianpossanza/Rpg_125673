@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Inventario {
-    // Mappa: Oggetto -> Quantità posseduta
     private final Map<Oggetto, Integer> zaino;
     private Arma armaEquipaggiata;
 
@@ -19,7 +18,6 @@ public class Inventario {
 
     public void aggiungiOggetto(Oggetto oggetto) {
         if (oggetto != null) {
-            //Se c'è già, aumenta la quantità di 1. Altrimenti lo inserisce con quantità 1.
             this.zaino.put(oggetto, this.zaino.getOrDefault(oggetto, 0) + 1);
             System.out.println("Aggiunto allo zaino: " + oggetto.getNome() + " (Totale: " + this.zaino.get(oggetto) + ")");
         }
@@ -27,12 +25,11 @@ public class Inventario {
 
     public void equipaggiaArma(Arma nuovaArma) {
         if (possiedeOggetto(nuovaArma)) {
-            // Se avevamo un'arma, la rimettiamo nello zaino
             if (this.armaEquipaggiata != null) {
                 aggiungiOggetto(this.armaEquipaggiata);
             }
             this.armaEquipaggiata = nuovaArma;
-            rimuoviOggetto(nuovaArma); // La togliamo dallo zaino perché la stiamo impugnando
+            rimuoviOggetto(nuovaArma);
             System.out.println("Hai equipaggiato: " + nuovaArma.getNome());
         } else {
             throw new IllegalArgumentException("Non possiedi quest'arma!");
@@ -57,7 +54,7 @@ public class Inventario {
         if (possiedeOggetto(oggetto)) {
             int quantitaRimasta = this.zaino.get(oggetto) - 1;
             if (quantitaRimasta == 0) {
-                this.zaino.remove(oggetto); // Se scende a 0, lo togliamo dalla mappa
+                this.zaino.remove(oggetto);
             } else {
                 this.zaino.put(oggetto, quantitaRimasta);
             }
@@ -66,6 +63,10 @@ public class Inventario {
 
     public int getBonusAttaccoArma() {
         return (this.armaEquipaggiata != null) ? this.armaEquipaggiata.getBonusAttacco() : 0;
+    }
+
+    public Map<Oggetto, Integer> getZaino() {
+        return this.zaino;
     }
 }
 

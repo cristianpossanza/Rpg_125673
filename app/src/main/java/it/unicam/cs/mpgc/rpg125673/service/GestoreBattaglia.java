@@ -26,20 +26,16 @@ public class GestoreBattaglia {
     public String eseguiTurnoAttacco() {
         if (battagliaTerminata) return "La battaglia è gia finita";
 
-        //uso StringBuiler per unire le stringhe in modo efficente
         StringBuilder logTurno = new StringBuilder();
 
-        //turno del giocatore
         int dannoGiocatore = giocatore.getAttacco();
         nemico.subisciDanno(dannoGiocatore);
         logTurno.append(giocatore.getNome()).append("attacca e infligge ").append(dannoGiocatore).append(" danni!\n");
 
-        //controllo se il mostro è morto
         if (!nemico.isVivo()) {
             return gestisciVittoria(logTurno);
         }
 
-        //Turno del nemico
         eseguiTurnoNemico(logTurno);
         return logTurno.toString();
     }
@@ -53,20 +49,17 @@ public class GestoreBattaglia {
         StringBuilder logTurno = new StringBuilder();
 
         try {
-            //delego all'inventario il compito di consumare la pozione
             giocatore.getInventario().consumaPozione(pozione, giocatore);
             logTurno.append(giocatore.getNome()).append(" beve ").append(pozione.getNome()).append(" e recupera hp\n");
         } catch (IllegalArgumentException e) {
             logTurno.append("Non hau questa pozione nello zaino!\n)");
-            return logTurno.toString(); //il turno si annulla se non hai la pozione
+            return logTurno.toString();
         }
 
-        //il nemico attacca mentre ti curi
         eseguiTurnoNemico(logTurno);
-
         return logTurno.toString();
     }
-        //metodi privati perche le logiche dei mostri li fa la macchina
+
     private void eseguiTurnoNemico(StringBuilder logTurno) {
         int dannoNemico = nemico.getAttacco();
         giocatore.subisciDanno(dannoNemico);
@@ -90,7 +83,6 @@ public class GestoreBattaglia {
         return logTurno.toString();
     }
 
-    // Getter utili per l'interfaccia grafica
     public boolean isBattagliaTerminata() {
         return battagliaTerminata;
     }

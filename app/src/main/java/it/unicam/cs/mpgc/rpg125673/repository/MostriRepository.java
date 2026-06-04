@@ -14,8 +14,6 @@ import java.util.*;
  * Rispetta il Single Responsibility Principle.
  */
 public class MostriRepository {
-
-    // Usiamo una HashMap: la Chiave è il nome (String), il Valore è il Mostro
     private final Map<String, Mostro> mappaMostri;
 
     public MostriRepository() {
@@ -29,15 +27,10 @@ public class MostriRepository {
             Reader reader = new InputStreamReader(
                     Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("mostri.json"))
             );
-
-            // 1. GSON legge il JSON come una normale Lista temporanea
             Type tipoListaMostri = new TypeToken<List<Mostro>>() {
             }.getType();
             List<Mostro> mostriLetti = gson.fromJson(reader, tipoListaMostri);
-
-            // 2. Travasiamo la Lista nella nostra HashMap
             for (Mostro m : mostriLetti) {
-                // Usiamo toLowerCase() così la ricerca non è sensibile alle maiuscole/minuscole
                 this.mappaMostri.put(m.getNome().toLowerCase(), m);
             }
             reader.close();
@@ -50,14 +43,10 @@ public class MostriRepository {
      * Cerca un mostro nella HashMap in modo istantaneo.
      */
     public Mostro getMostro (String nome){
-        // Cerchiamo direttamente la chiave nella mappa (tutto in minuscolo)
         Mostro mostro = this.mappaMostri.get(nome.toLowerCase());
-
             if (mostro != null) {
-                 // Restituiamo una nuova copia per il combattimento
                 return new Mostro(mostro.getNome(), mostro.getPuntiVitaMassimi(), mostro.getAttacco(), mostro.getRicompensaEsperienza());
                 }
-
-            return null; // Se il mostro non esiste nella mappa
+            return null;
         }
 }

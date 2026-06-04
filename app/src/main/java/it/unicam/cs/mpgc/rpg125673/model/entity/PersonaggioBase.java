@@ -2,7 +2,6 @@ package it.unicam.cs.mpgc.rpg125673.model.entity;
 
 public abstract class PersonaggioBase implements Personaggio {
 
-    // Tolto il "final", ora le variabili possono essere modificate dai Setter
     private String nome;
     private int puntiVita;
     private int puntiVitaMassimi;
@@ -12,7 +11,6 @@ public abstract class PersonaggioBase implements Personaggio {
     public PersonaggioBase() {
     }
 
-    //Aggiungiamo i metodi Setter per impostare i valori
     public void setNome(String nome) {
         if (nome == null || nome.trim().isEmpty()) {
             throw new IllegalArgumentException("Il nome del personaggio non può essere nullo o vuoto.");
@@ -45,7 +43,6 @@ public abstract class PersonaggioBase implements Personaggio {
         this.attacco = attacco;
     }
 
-    // I Getter rimangono uguali
     @Override
     public String getNome() { return this.nome; }
 
@@ -77,6 +74,4 @@ public abstract class PersonaggioBase implements Personaggio {
             }
         }
     }
-
-    // NOTA: isVivo() è stato rimosso perché ora ci pensa l'interfaccia!
 }

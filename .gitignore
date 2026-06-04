@@ -6,3 +6,8 @@ build
 
 # Ignore Kotlin plugin data
 .kotlin
+
+# Ignora la cartella di configurazione di IntelliJ
+.idea/
+*.iml
+
