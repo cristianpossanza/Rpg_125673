@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
 public class MainController {
-
+//chiedere a se: Il controller non è troppo lungo? non sarebbe meglio creare piu controller?
     @FXML private Label lblNomeGiocatore;
     @FXML private Label lblHpGiocatore;
     @FXML private Label lblArmaGiocatore;
