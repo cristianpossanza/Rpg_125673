@@ -36,10 +36,12 @@ public class Inventario {
             throw new OggettoNonPossedutoException("Non possiedi l'arma: " + nuovaArma.getNome());
         }
     }
-        //uso l'interfaccia personaggio base
+
+    //uso l'interfaccia personaggio base
     public void consumaPozione(Pozione pozione, Personaggio bersaglio) {
         if (possiedeOggetto(pozione)) {
-            bersaglio.cura(pozione.getPuntiCura());;
+            bersaglio.cura(pozione.getPuntiCura());
+            ;
             rimuoviOggetto(pozione);
             System.out.println(bersaglio.getNome() + " si cura di " + pozione.getPuntiCura() + " HP.");
         } else {
@@ -68,6 +70,15 @@ public class Inventario {
 
     public Map<Oggetto, Integer> getZaino() {
         return this.zaino;
+    }
+
+    public Arma getArmaEquipaggiata() {
+        return this.armaEquipaggiata;
+    }
+
+    public void buttaVecchieArmi() {
+        this.armaEquipaggiata = null; // Togliamo l'arma dalle mani
+        this.zaino.keySet().removeIf(oggetto -> oggetto instanceof Arma);
     }
 }
 

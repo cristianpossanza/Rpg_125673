@@ -3,26 +3,35 @@
     <armi>
         <arma>
             <nome>Spada di Legno</nome>
-            <descrizione>Una semplice spada da allenamento.</descrizione>
+            <descrizione>Una spada base.</descrizione>
             <bonusAttacco>5</bonusAttacco>
         </arma>
         <arma>
-            <nome>Ascia da Battaglia</nome>
-            <descrizione>Un'ascia pesante e letale.</descrizione>
-            <bonusAttacco>15</bonusAttacco>
+            <nome>Spada di Ferro</nome>
+            <descrizione>Una spada resistente.</descrizione>
+            <bonusAttacco>12</bonusAttacco>
+        </arma>
+        <arma>
+            <nome>Spada d'Acciaio</nome>
+            <descrizione>Un'arma letale.</descrizione>
+            <bonusAttacco>25</bonusAttacco>
+        </arma>
+        <arma>
+            <nome>Spada Leggendaria</nome>
+            <descrizione>L'arma definitiva.</descrizione>
+            <bonusAttacco>50</bonusAttacco>
         </arma>
     </armi>
-
     <pozioni>
         <pozione>
             <nome>Pozione Piccola</nome>
-            <descrizione>Cura le ferite lievi.</descrizione>
-            <puntiCura>20</puntiCura>
+            <descrizione>Cura le ferite.</descrizione>
+            <puntiCura>30</puntiCura>
         </pozione>
         <pozione>
-            <nome>Elisir della Vita</nome>
-            <descrizione>Ripristina molta salute.</descrizione>
-            <puntiCura>100</puntiCura>
+            <nome>Pozione Grande</nome>
+            <descrizione>Cura ferite gravi.</descrizione>
+            <puntiCura>60</puntiCura> <!-- Cura 60 HP, perfetta per il boss! -->
         </pozione>
     </pozioni>
 </catalogo>

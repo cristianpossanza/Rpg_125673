@@ -38,4 +38,9 @@ public class Pozione implements Oggetto{
     public int hashCode() {
         return nome.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return this.getNome() + " (Cura " + this.getPuntiCura() + " HP)";
+    }
 }

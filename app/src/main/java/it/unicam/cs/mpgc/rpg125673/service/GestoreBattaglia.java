@@ -47,17 +47,14 @@ public class GestoreBattaglia {
      */
     public String eseguiTurnoPozione(Pozione pozione) {
         if (battagliaTerminata) return "La battaglia è già finita!";
-
         StringBuilder logTurno = new StringBuilder();
-
         try {
             giocatore.getInventario().consumaPozione(pozione, giocatore);
-            logTurno.append(giocatore.getNome()).append(" beve ").append(pozione.getNome()).append(" e recupera hp\n");
+            logTurno.append(giocatore.getNome()).append(" beve ").append(pozione.getNome()).append(" e recupera ").append(pozione.getPuntiCura()).append(" hp!\n");
         } catch (IllegalArgumentException e) {
-            logTurno.append("Non hau questa pozione nello zaino!\n)");
+            logTurno.append("Non hai questa pozione nello zaino!\n");
             return logTurno.toString();
         }
-
         eseguiTurnoNemico(logTurno);
         return logTurno.toString();
     }
