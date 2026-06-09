@@ -5,16 +5,19 @@ import it.unicam.cs.mpgc.rpg125673.model.entity.Mostro;
 import it.unicam.cs.mpgc.rpg125673.model.item.Arma;
 import it.unicam.cs.mpgc.rpg125673.model.item.Oggetto;
 import it.unicam.cs.mpgc.rpg125673.model.item.Pozione;
-import it.unicam.cs.mpgc.rpg125673.repository.MostriRepository;
-import it.unicam.cs.mpgc.rpg125673.repository.OggettiRepository;
-import it.unicam.cs.mpgc.rpg125673.service.GestoreBattaglia;
-
+import it.unicam.cs.mpgc.rpg125673.service.GestorePartita;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controller del pattern MVC per l'interfaccia JavaFX.
+ * Non contiene logica di business, ma si limita ad intercettare gli eventi grafici, invocare i metodi
+ * del GestorePartita e aggiornare dinamicamente i componenti visivi.
+ */
 public class MainController {
 
     @FXML private Label lblRound;
@@ -22,86 +25,32 @@ public class MainController {
     @FXML private Label lblHpGiocatore;
     @FXML private Label lblArmaGiocatore;
     @FXML private Label lblInventario;
-
     @FXML private Label lblNomeMostro;
     @FXML private Label lblHpMostro;
-
     @FXML private TextArea logBattaglia;
+
     @FXML private Button btnAttacca;
     @FXML private Button btnPozione;
     @FXML private Button btnEquipaggia;
     @FXML private Button btnProssimoRound;
 
-    private GestoreBattaglia gestoreBattaglia;
-    private Giocatore giocatore;
-    private MostriRepository mostriRepo;
-    private OggettiRepository oggettiRepo;
-
-    private int roundCorrente = 1;
-    private final int MAX_ROUND = 4;
-
-    private final String[] progressioneMostri = {"Goblin", "Orco Furioso", "Golem di Pietra", "Drago di Fuoco"};
-    private final String[] progressioneArmi = {"Spada di Legno", "Spada di Ferro", "Spada d'Acciaio", "Spada Leggendaria"};
-
-    private Arma armaDelRoundAttuale;
-    private Pozione pozioneBase;
+    private GestorePartita partita;
 
     @FXML
     public void initialize() {
-        mostriRepo = new MostriRepository();
-        oggettiRepo = new OggettiRepository();
-        pozioneBase = (Pozione) oggettiRepo.getOggetto("Pozione Piccola");
+        partita = new GestorePartita();
         String nomeEroe = chiediNomeGiocatore();
-        giocatore = new Giocatore(nomeEroe);
-        giocatore.getInventario().aggiungiOggetto(pozioneBase);
-        giocatore.getInventario().aggiungiOggetto(pozioneBase);
-        giocatore.getInventario().aggiungiOggetto(pozioneBase);
-
-        preparaRound();
+        String logIniziale = partita.iniziaNuovaPartita(nomeEroe);
+        scriviLog("Benvenuto, valoroso " + partita.getGiocatore().getNome() + "!");
+        scriviLog(logIniziale);
+        aggiornaStatistiche();
     }
 
-    /**
-     * Prepara l'arena in base al round corrente.
-     */
-    private void preparaRound() {
-        lblRound.setText("ROUND " + roundCorrente + " / " + MAX_ROUND);
-
-        giocatore.getInventario().buttaVecchieArmi();
-
-        String nomeNuovaArma = progressioneArmi[roundCorrente - 1];
-        armaDelRoundAttuale = (Arma) oggettiRepo.getOggetto(nomeNuovaArma);
-
-        if (armaDelRoundAttuale != null) {
-            giocatore.getInventario().aggiungiOggetto(armaDelRoundAttuale);
-            giocatore.getInventario().equipaggiaArma(armaDelRoundAttuale);
-        }
-
-        if (roundCorrente == MAX_ROUND) {
-            pozioneBase = (Pozione) oggettiRepo.getOggetto("Pozione Grande");
-            giocatore.getInventario().aggiungiOggetto(pozioneBase);
-            giocatore.getInventario().aggiungiOggetto(pozioneBase);
-            scriviLog("\nIl boss finale si avvicina! Il gioco ti regala 2 " + pozioneBase.getNome() + "!");
-        } else if (roundCorrente > 1) {
-            giocatore.getInventario().aggiungiOggetto(pozioneBase);
-            giocatore.getInventario().aggiungiOggetto(pozioneBase);
-            scriviLog("\nHai trovato 2 Pozioni Piccole e una " + armaDelRoundAttuale.getNome() + "!");
-        } else {
-            scriviLog("Inizi l'avventura con una " + armaDelRoundAttuale.getNome() + "!");
-        }
-
-        String nomeMostro = progressioneMostri[roundCorrente - 1];
-        Mostro nemico = mostriRepo.getMostro(nomeMostro);
-
-        if (nemico == null) {
-            nemico = new Mostro("Mostro Buggato", 10, 1, 0);
-        }
-
-        gestoreBattaglia = new GestoreBattaglia(giocatore, nemico);
-
-        lblNomeGiocatore.setText(giocatore.getNome());
-        lblNomeMostro.setText(nemico.getNome());
-
-        scriviLog("\nLungo la strada hai incontrato " + nemico.getNome());
+    @FXML
+    public void avanzaRound() {
+        String log = partita.avanzaRound();
+        scriviLog("\n--- ROUND " + partita.getRoundCorrente() + " ---");
+        scriviLog(log);
 
         btnAttacca.setDisable(false);
         btnPozione.setDisable(false);
@@ -112,101 +61,89 @@ public class MainController {
     }
 
     @FXML
-    public void avanzaRound() {
-        roundCorrente++;
-        preparaRound();
-    }
-
-    @FXML
     public void gestisciAttacco() {
-        scriviLog(gestoreBattaglia.eseguiTurnoAttacco());
+        scriviLog(partita.getBattagliaCorrente().eseguiTurnoAttacco());
         aggiornaStatistiche();
         controllaFineBattaglia();
     }
 
     @FXML
     public void gestisciPozione() {
-        java.util.List<Pozione> pozioniDisponibili = new java.util.ArrayList<>();
-
-        for (Oggetto ogg : giocatore.getInventario().getZaino().keySet()) {
-            if (ogg instanceof Pozione p) {
-                pozioniDisponibili.add(p);
-            }
+        List<Pozione> pozioniDisponibili = new ArrayList<>();
+        for (Oggetto ogg : partita.getGiocatore().getInventario().getZaino().keySet()) {
+            if (ogg instanceof Pozione p) pozioniDisponibili.add(p);
         }
 
         if (pozioniDisponibili.isEmpty()) {
-            mostraErrore("Zaino Vuoto", "Non hai nessuna pozione nello zaino!");
+            mostraErrore("Zaino Vuoto", "Non hai pozioni!");
             return;
         }
 
         if (pozioniDisponibili.size() == 1) {
-            usaPozioneScelta(pozioniDisponibili.get(0));
-            return;
+            scriviLog(partita.getBattagliaCorrente().eseguiTurnoPozione(pozioniDisponibili.get(0)));
+        } else {
+            ChoiceDialog<Pozione> dialog = new ChoiceDialog<>(pozioniDisponibili.get(0), pozioniDisponibili);
+            dialog.setTitle("Scegli Pozione");
+            dialog.setHeaderText("Quale pozione vuoi bere?");
+            Optional<Pozione> scelta = dialog.showAndWait();
+            if (scelta.isPresent()) {
+                scriviLog(partita.getBattagliaCorrente().eseguiTurnoPozione(scelta.get()));
+            } else {
+                return;
+            }
         }
-
-        ChoiceDialog<Pozione> dialog = new ChoiceDialog<>(pozioniDisponibili.get(0), pozioniDisponibili);
-        dialog.setTitle("Scegli Pozione");
-        dialog.setHeaderText("Quale pozione vuoi bere?");
-        dialog.setContentText("Scegli:");
-
-        Optional<Pozione> scelta = dialog.showAndWait();
-
-        if (scelta.isPresent()) {
-            usaPozioneScelta(scelta.get());
-        }
+        aggiornaStatistiche();
+        controllaFineBattaglia();
     }
 
     @FXML
     public void gestisciEquipaggia() {
-        try {
-            giocatore.getInventario().equipaggiaArma(armaDelRoundAttuale);
-            scriviLog(giocatore.getNome() + " impugna " + armaDelRoundAttuale.getNome() + "!");
-            aggiornaStatistiche();
-        } catch (Exception e) {
-            mostraErrore("Attenzione", e.getMessage());
-        }
+        mostraErrore("Info", "L'arma migliore viene equipaggiata in automatico ad ogni round!");
     }
 
+
     // --- METODI PRIVATI DI SUPPORTO ---
-
     private void aggiornaStatistiche() {
-        lblHpGiocatore.setText("HP: " + giocatore.getPuntiVita() + " / " + giocatore.getPuntiVitaMassimi());
+        Giocatore g = partita.getGiocatore();
+        Mostro m = partita.getBattagliaCorrente().getNemico();
 
-        Arma armaEquipaggiata = giocatore.getInventario().getArmaEquipaggiata();
-        if (armaEquipaggiata != null) {
-            lblArmaGiocatore.setText("Arma: " + armaEquipaggiata.getNome() + " (+" + armaEquipaggiata.getBonusAttacco() + " Danni)\nDanno Totale: " + giocatore.getAttacco());
+        lblRound.setText("ROUND " + partita.getRoundCorrente() + " / " + partita.getMaxRound());
+        lblNomeGiocatore.setText(g.getNome());
+        lblNomeMostro.setText(m.getNome());
+
+        lblHpGiocatore.setText("HP: " + g.getPuntiVita() + " / " + g.getPuntiVitaMassimi());
+        lblHpMostro.setText("HP: " + m.getPuntiVita() + " / " + m.getPuntiVitaMassimi());
+
+        Arma armaEq = g.getInventario().getArmaEquipaggiata();
+        if (armaEq != null) {
+            lblArmaGiocatore.setText("Arma: " + armaEq.getNome() + " (+" + armaEq.getBonusAttacco() + " Danni)\nDanno Totale: " + g.getAttacco());
         } else {
-            lblArmaGiocatore.setText("Arma: Mani nude (Danno Totale: " + giocatore.getAttacco() + ")");
+            lblArmaGiocatore.setText("Arma: Mani nude (Danno Totale: " + g.getAttacco() + ")");
         }
 
-        // Aggiorna Inventario
-        if (giocatore.getInventario().getZaino().isEmpty()) {
+        if (g.getInventario().getZaino().isEmpty()) {
             lblInventario.setText("Zaino vuoto");
         } else {
             StringBuilder testoZaino = new StringBuilder();
-            for (java.util.Map.Entry<Oggetto, Integer> entry : giocatore.getInventario().getZaino().entrySet()) {
+            for (Map.Entry<Oggetto, Integer> entry : g.getInventario().getZaino().entrySet()) {
                 testoZaino.append("- ").append(entry.getKey().getNome()).append(" (x").append(entry.getValue()).append(")\n");
             }
             lblInventario.setText(testoZaino.toString());
         }
-
-        // Aggiorna HP Mostro
-        Mostro nemico = gestoreBattaglia.getNemico();
-        lblHpMostro.setText("HP: " + nemico.getPuntiVita() + " / " + nemico.getPuntiVitaMassimi());
     }
 
     private void controllaFineBattaglia() {
-        if (gestoreBattaglia.isBattagliaTerminata()) {
+        if (partita.getBattagliaCorrente().isBattagliaTerminata()) {
             btnAttacca.setDisable(true);
             btnPozione.setDisable(true);
             btnEquipaggia.setDisable(true);
 
-            if (giocatore.isVivo()) {
-                if (roundCorrente < MAX_ROUND) {
-                    scriviLog("\n--- ROUND SUPERATO! Preparati al prossimo... ---");
+            if (partita.getGiocatore().isVivo()) {
+                if (partita.getRoundCorrente() < partita.getMaxRound()) {
+                    scriviLog("\n--- ROUND SUPERATO! ---");
                     btnProssimoRound.setVisible(true);
                 } else {
-                    scriviLog("\n HAI SCONFITTO IL DRAGO! HAI VINTO IL GIOCO! ");
+                    scriviLog("\n HAI VINTO IL GIOCO! ");
                     mostraErrore("VITTORIA", "Complimenti, hai completato il Dungeon!");
                 }
             } else {
@@ -215,23 +152,21 @@ public class MainController {
         }
     }
 
+    private void scriviLog(String messaggio) { logBattaglia.appendText(messaggio + "\n"); }
+
     private String chiediNomeGiocatore() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Creazione Personaggio");
         dialog.setHeaderText("Benvenuto in Dungeon Arena RPG!");
         dialog.setContentText("Inserisci il nome del tuo eroe:");
-
         while (true) {
             Optional<String> result = dialog.showAndWait();
-            if (result.isPresent()) {
-                String nome = result.get().trim();
-                if (!nome.isEmpty()) {
-                    return nome;
-                } else {
-                    mostraErrore("Nome non valido", "Il nome non può essere vuoto. Riprova.");
-                }
-            } else {
+            if (result.isPresent() && !result.get().trim().isEmpty()) {
+                return result.get().trim();
+            } else if (!result.isPresent()) {
                 System.exit(0);
+            } else {
+                mostraErrore("Nome non valido", "Il nome non può essere vuoto.");
             }
         }
     }
@@ -242,15 +177,5 @@ public class MainController {
         alert.setHeaderText(null);
         alert.setContentText(messaggio);
         alert.showAndWait();
-    }
-
-    private void scriviLog(String messaggio) {
-        logBattaglia.appendText(messaggio + "\n");
-    }
-
-    private void usaPozioneScelta(Pozione pozioneDaUsare) {
-        scriviLog(gestoreBattaglia.eseguiTurnoPozione(pozioneDaUsare));
-        aggiornaStatistiche();
-        controllaFineBattaglia();
     }
 }

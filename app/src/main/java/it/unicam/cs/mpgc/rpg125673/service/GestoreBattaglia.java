@@ -7,8 +7,10 @@ import it.unicam.cs.mpgc.rpg125673.model.item.Pozione;
 import java.util.Objects;
 
 /**
- * Questa classe si occupa esclusivamente di gestire le regole
- * e i turni di un combattimento tra un Giocatore e un Mostro.
+ * Service che gestice il singolo scontro.
+ * Gestisce l'esecuzione sequenziale dei turni tra un Giocatore e un Mostro,
+ * calcolando i danni, le cure e determinando le condizioni di vittoria o sconfitta.
+ * Non contiene logica grafica, ma restituisce stringhe di log per la UI.
  */
 public class GestoreBattaglia {
     private final Giocatore giocatore;
@@ -21,10 +23,6 @@ public class GestoreBattaglia {
         this.battagliaTerminata = false;
     }
 
-    /**
-     * Esecuzione Sequenziale: Il giocatore attacca. Se il mostro sopravvive, contrattacca.
-     * Restituisce il resoconto del turno (da mostrare poi nella GUI).
-     */
     public String eseguiTurnoAttacco() {
         if (battagliaTerminata) return "La battaglia è gia finita";
 
@@ -32,7 +30,7 @@ public class GestoreBattaglia {
 
         int dannoGiocatore = giocatore.getAttacco();
         nemico.subisciDanno(dannoGiocatore);
-        logTurno.append(giocatore.getNome()).append("attacca e infligge ").append(dannoGiocatore).append(" danni!\n");
+        logTurno.append(giocatore.getNome()).append(" attacca e infligge ").append(dannoGiocatore).append(" danni!\n");
 
         if (!nemico.isVivo()) {
             return gestisciVittoria(logTurno);
@@ -42,9 +40,7 @@ public class GestoreBattaglia {
         return logTurno.toString();
     }
 
-    /**
-     * Il giocatore usa il suo turno per curarsi. Il mostro ne approfitta per attaccare.
-     */
+
     public String eseguiTurnoPozione(Pozione pozione) {
         if (battagliaTerminata) return "La battaglia è già finita!";
         StringBuilder logTurno = new StringBuilder();

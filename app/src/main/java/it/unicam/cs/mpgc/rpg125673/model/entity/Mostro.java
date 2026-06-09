@@ -1,5 +1,10 @@
 package it.unicam.cs.mpgc.rpg125673.model.entity;
 
+/**
+ * Rappresenta un'entità nemica all'interno del gioco.
+ * Estende PersonaggioBase e aggiunge la logica relativa alla ricompensa
+ * in punti esperienza fornita al Giocatore in caso di sconfitta.
+ */
 public class Mostro extends PersonaggioBase {
 
     private int ricompensaEsperienza;

@@ -1,7 +1,9 @@
 package it.unicam.cs.mpgc.rpg125673.exception;
 
-import it.unicam.cs.mpgc.rpg125673.model.item.Oggetto;
-
+/**
+ * Eccezione personalizzata lanciata a runtime quando un'entità tenta di
+ * consumare o equipaggiare un oggetto non presente nel proprio inventario.
+ */
 public class OggettoNonPossedutoException extends RuntimeException{
     public OggettoNonPossedutoException(String messaggio) {
         super(messaggio);

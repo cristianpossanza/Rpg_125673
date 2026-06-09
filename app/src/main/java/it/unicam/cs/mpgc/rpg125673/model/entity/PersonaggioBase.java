@@ -1,5 +1,9 @@
 package it.unicam.cs.mpgc.rpg125673.model.entity;
 
+/**
+ * Classe astratta che fornisce un'implementazione scheletrica dell'interfaccia Personaggio.
+ * Centralizza la logica di base (salute, danni, cure).
+ */
 public abstract class PersonaggioBase implements Personaggio {
 
     private String nome;

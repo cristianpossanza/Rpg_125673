@@ -6,7 +6,6 @@ import it.unicam.cs.mpgc.rpg125673.model.item.Pozione;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -16,7 +15,12 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
+/**
+ * Si occupa del caricamento e della fornitura dei dati relativi agli Oggetti.
+ * Legge i dati strutturati da un file XML utilizzando XPath.
+ * Utilizza i Java Streams per filtrare e ricercare gli oggetti all'interno
+ * del catalogo in modo dichiarativo ed efficiente.
+ */
 public class OggettiRepository {
     private final Set<Oggetto> catalogoOggetti;
 
@@ -74,16 +78,6 @@ public class OggettiRepository {
                 .orElse(null);
     }
 
-//stavo pensando di dividere questa classe in piu classi, attualmente fa due cose diverse:
-//Analizza e decodifica un file XML (Logica di parsing/infrastruttura).
-//Fa da "magazzino" e fornisce gli oggetti quando richiesti (Logica di repository/dominio).
-
-//Andando a cercare su internet il compito principale di un Repository è quello di fare da magazzino e fornire i dati (quindi avere il metodo getOggetto).
-//Sono giunto alla conclusione che l'errore non è avere getOggetto nel Repository, ma è avere la logica di lettura dell'XML dentro il Repository
-//proverei a dividere questa classe in due.
-//
-//Classe 1 (LettoreXmlOggetti): Si occupa solo di aprire il file XML, leggerlo con XPath e restituire un HashSet di oggetti. Fine.
-//Classe 2 (OggettiRepository): Prende l'HashSet già pronto, lo custodisce e offre il metodo getOggetto (tramite Stream) a chi ne ha bisogno nel gioco.
 
 
 }

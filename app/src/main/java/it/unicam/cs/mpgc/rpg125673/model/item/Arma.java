@@ -1,5 +1,9 @@
 package it.unicam.cs.mpgc.rpg125673.model.item;
 
+/**
+ * Rappresenta un oggetto equipaggiabile che incrementa le statistiche offensive.
+ * È progettata come classe immutabile per garantire la sicurezza dei dati durante l'esecuzione.
+ */
 public class Arma implements Oggetto{
     private final String nome;
     private final String descrizione;
@@ -37,5 +41,10 @@ public class Arma implements Oggetto{
     @Override
     public int hashCode() {
         return nome.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return this.getNome() + " (+" + this.getBonusAttacco() + " Danni)";
     }
 }

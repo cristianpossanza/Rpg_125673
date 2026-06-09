@@ -1,5 +1,10 @@
 package it.unicam.cs.mpgc.rpg125673.model.entity;
-
+/**
+ * Rappresenta l'eroe controllato dall'utente.
+ * Estende PersonaggioBase ereditandone le statistiche e utilizza la Composizione
+ * per delegare la gestione degli oggetti alla classe Inventario (Principio SRP).
+ * Sfrutta il Polimorfismo facendo l'override del calcolo dell'attacco.
+ */
 public class Giocatore extends PersonaggioBase {
 
     private int esperienza;
@@ -14,17 +19,15 @@ public class Giocatore extends PersonaggioBase {
 
     // Costruttore che useremo noi nel gioco
     public Giocatore(String nome) {
-        super(); //Chiama il costruttore vuoto del padre
+        this(); //chiama il costruttore vuoto qui sopra (che fa gia super() e crea l'inventario!)
 
-        // Impostiamo le statistiche base del giocatore tramite i setter
+        //Impostiamo le statistiche base del giocatore tramite i setter
         this.setNome(nome);
         this.setPuntiVitaMassimi(100);
         this.setPuntiVita(100);
         this.setAttacco(15);
-
         this.esperienza = 0;
         this.livello = 1;
-        this.inventario = new Inventario();
     }
 
     //chiedo all'inventario il bonus dell'arma e lo somma alla sua forza base

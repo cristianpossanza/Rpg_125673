@@ -10,7 +10,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * Questa classe si occupa ESCLUSIVAMENTE di caricare i mostri dal file JSON.
+ * Questa classe si occupa esclusivamente di caricare i mostri dal file JSON.
  * Rispetta il Single Responsibility Principle.
  */
 public class MostriRepository {

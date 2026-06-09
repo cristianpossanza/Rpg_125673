@@ -1,5 +1,10 @@
 package it.unicam.cs.mpgc.rpg125673.model.item;
 
+/**
+ * Rappresenta un oggetto consumabile in grado di ripristinare i Punti Vita.
+ * È una classe immutabile. L'override dei metodi equals() e hashCode() garantisce
+ * il corretto funzionamento all'interno delle Java Collections.
+ */
 public class Pozione implements Oggetto{
     private final String nome;
     private final String descrizione;

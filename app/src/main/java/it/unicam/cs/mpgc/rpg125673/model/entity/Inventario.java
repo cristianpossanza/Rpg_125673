@@ -8,6 +8,11 @@ import it.unicam.cs.mpgc.rpg125673.model.item.Pozione;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Gestisce la collezione di oggetti posseduti da un Giocatore.
+ * Separa la logica degli oggetti dalle statistiche dell'entità.
+ * Utilizza una HashMap per ottimizzare la memoria, raggruppando gli oggetti identici per quantità.
+ */
 public class Inventario {
     private final Map<Oggetto, Integer> zaino;
     private Arma armaEquipaggiata;
