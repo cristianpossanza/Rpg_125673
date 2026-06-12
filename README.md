@@ -10,7 +10,7 @@ Prerequisiti:
 
 Istruzioni:
 - git clone <https://github.com/cristianpossanza/Rpg_125673>
-- cd <INSERISCI-QUI-IL-NOME-DELLA-CARTELLA>
+- cd <Rpg_125673>
 
 Build del progetto:
 - ./gradlew build
