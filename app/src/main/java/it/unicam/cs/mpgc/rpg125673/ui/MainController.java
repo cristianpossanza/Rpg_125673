@@ -1,5 +1,7 @@
 package it.unicam.cs.mpgc.rpg125673.ui;
 
+import it.unicam.cs.mpgc.rpg125673.model.entity.Punteggio;
+import it.unicam.cs.mpgc.rpg125673.repository.PunteggioRepository;
 import it.unicam.cs.mpgc.rpg125673.model.entity.Giocatore;
 import it.unicam.cs.mpgc.rpg125673.model.entity.Mostro;
 import it.unicam.cs.mpgc.rpg125673.model.item.Arma;
@@ -35,6 +37,8 @@ public class MainController {
     @FXML private Button btnProssimoRound;
 
     private GestorePartita partita;
+    private boolean avvisoArmaMostrato = false;
+    private PunteggioRepository punteggioRepository;
 
     @FXML
     public void initialize() {
@@ -57,15 +61,22 @@ public class MainController {
         btnEquipaggia.setDisable(false);
         btnProssimoRound.setVisible(false);
 
+        avvisoArmaMostrato = false;
         aggiornaStatistiche();
     }
 
     @FXML
     public void gestisciAttacco() {
+        if (!avvisoArmaMostrato && partita.getGiocatore().getInventario().getArmaEquipaggiata() == null) {
+            mostraErrore("Consiglio di Gioco", "Stai per attaccare a mani nude!\nRicordati di equipaggiare l'arma più forte che hai nello zaino prima di attaccare.");
+            avvisoArmaMostrato = true;
+            return;
+        }
         scriviLog(partita.getBattagliaCorrente().eseguiTurnoAttacco());
         aggiornaStatistiche();
         controllaFineBattaglia();
     }
+
 
     @FXML
     public void gestisciPozione() {
@@ -98,7 +109,24 @@ public class MainController {
 
     @FXML
     public void gestisciEquipaggia() {
-        mostraErrore("Info", "L'arma migliore viene equipaggiata in automatico ad ogni round!");
+        Arma armaDaEquipaggiare = null;
+        for (Oggetto ogg : partita.getGiocatore().getInventario().getZaino().keySet()) {
+            if (ogg instanceof Arma a) {
+                armaDaEquipaggiare = a;
+                break;
+            }
+        }
+        if (armaDaEquipaggiare != null) {
+            try {
+                partita.getGiocatore().getInventario().equipaggiaArma(armaDaEquipaggiare);
+                scriviLog(partita.getGiocatore().getNome() + " impugna " + armaDaEquipaggiare.getNome() + "!");
+                aggiornaStatistiche();
+            } catch (Exception e) {
+                mostraErrore("Errore", e.getMessage());
+            }
+        } else {
+            mostraErrore("Zaino", "Non hai nessuna nuova arma da equipaggiare o l'hai già impugnata!");
+        }
     }
 
 
@@ -137,6 +165,8 @@ public class MainController {
             btnAttacca.setDisable(true);
             btnPozione.setDisable(true);
             btnEquipaggia.setDisable(true);
+            boolean partitaFinita = false;
+            boolean vittoriaFinale = false;
 
             if (partita.getGiocatore().isVivo()) {
                 if (partita.getRoundCorrente() < partita.getMaxRound()) {
@@ -145,9 +175,23 @@ public class MainController {
                 } else {
                     scriviLog("\n HAI VINTO IL GIOCO! ");
                     mostraErrore("VITTORIA", "Complimenti, hai completato il Dungeon!");
+                    partitaFinita = true;
+                    vittoriaFinale = true;
                 }
             } else {
                 mostraErrore("SCONFITTA", "Sei caduto in battaglia... Riprova!");
+                partitaFinita = true;
+            }
+
+            if (partitaFinita) {
+                Punteggio p = new Punteggio(
+                        partita.getGiocatore().getNome(),
+                        partita.getGiocatore().getEsperienza(),
+                        partita.getRoundCorrente(),
+                        vittoriaFinale
+                );
+                punteggioRepository.salvaPunteggio(p);
+                scriviLog("\n[Punteggio salvato nella Hall of Fame!]");
             }
         }
     }
@@ -155,10 +199,27 @@ public class MainController {
     private void scriviLog(String messaggio) { logBattaglia.appendText(messaggio + "\n"); }
 
     private String chiediNomeGiocatore() {
+        punteggioRepository = new PunteggioRepository();
+        List<Punteggio> top5 = punteggioRepository.getMiglioriPunteggi();
+
+        StringBuilder classifica = new StringBuilder("--- HALL OF FAME ---\n");
+        if (top5.isEmpty()) {
+            classifica.append("Nessun punteggio registrato. Sii il primo!\n");
+        } else {
+            for (int i = 0; i < top5.size(); i++) {
+                Punteggio p = top5.get(i);
+                classifica.append(i + 1).append(". ").append(p.getNomeGiocatore())
+                        .append(" - ").append(p.getEsperienzaTotale()).append(" XP (Round ")
+                        .append(p.getRoundRaggiunto()).append(")\n");
+            }
+        }
+        classifica.append("\nInserisci il nome del tuo eroe:");
+
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Creazione Personaggio");
         dialog.setHeaderText("Benvenuto in Dungeon Arena RPG!");
-        dialog.setContentText("Inserisci il nome del tuo eroe:");
+        dialog.setContentText(classifica.toString());
+
         while (true) {
             Optional<String> result = dialog.showAndWait();
             if (result.isPresent() && !result.get().trim().isEmpty()) {

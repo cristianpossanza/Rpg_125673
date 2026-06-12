@@ -57,8 +57,7 @@ public class GestorePartita {
         Arma nuovaArma = (Arma) oggettiRepository.getOggetto(progressioneArmi[roundCorrente - 1]);
         if (nuovaArma != null) {
             giocatore.getInventario().aggiungiOggetto(nuovaArma);
-            giocatore.getInventario().equipaggiaArma(nuovaArma);
-            log.append("Hai equipaggiato automaticamente: ").append(nuovaArma.getNome()).append("\n");
+            log.append("Hai trovato: ").append(nuovaArma.getNome()).append(". Ricordati di equipaggiarla!\n");
         }
 
         //GESTIONE POZIONI
@@ -79,7 +78,7 @@ public class GestorePartita {
         if (nemico == null) nemico = new Mostro("Mostro Buggato", 10, 1, 0);
 
         this.battagliaCorrente = new GestoreBattaglia(giocatore, nemico);
-        log.append("Un ").append(nemico.getNome()).append(" selvatico appare!\n");
+        log.append("Un ").append(nemico.getNome()).append(" si è intromesso nella tua strada!\n");
 
         return log.toString();
     }
